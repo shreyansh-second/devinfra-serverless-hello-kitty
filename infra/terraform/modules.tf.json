@@ -1,0 +1,81 @@
+{
+  "module": {
+    "appcd_02abe359-3f4c-560c-be3a-a14d98450ff9": {
+      "assume_role_policy": "{\n\t\t\"Version\": \"2012-10-17\",\n\t\t\"Statement\":{\n\t\t\t\t\"Action\": \"sts:AssumeRole\",\n\t\t\t\t\"Effect\": \"Allow\",\n\t\t\t\t\"Principal\": {\n\t\t\t\t\t\"Service\": \"lambda.amazonaws.com\"\n\t\t\t\t}\n\t\t\t}\n\t}",
+      "description": null,
+      "force_detach_policies": true,
+      "inline_policy": [],
+      "name": "devinfra-serverless-hello-kitty-role",
+      "source": "./modules/aws_iam_role",
+      "tags": null
+    },
+    "appcd_28b43625-fbfa-4e17-b1fd-3bf26d94548c": {
+      "name": "aws_s3-devinfra-serverless-hello-kitty-policy",
+      "policy": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"AllowKmsAccess\",\n      \"Action\": [\n        \"kms:Decrypt\",\n        \"kms:Encrypt\",\n        \"kms:GenerateDataKey\"\n      ],\n      \"Effect\": \"Allow\",\n      \"Resource\": [\n        \"${module.appcd_976676d4-ee68-5dc8-ba29-4a26ee310260.kms_arn}\"\n      ]\n    },\n    {\n      \"Sid\": \"devinfraserverlesshellokittyIMAGESBUCKETS3Bucket976676d4ee685dc8ba294a26ee310260\",\n      \"Action\": [\n        \"s3:PutObject\",\n        \"s3:ListBucket\",\n        \"s3:GetObject\",\n        \"s3:GetObjectVersion\"\n      ],\n      \"Effect\": \"Allow\",\n      \"Resource\": [\n        \"${module.appcd_976676d4-ee68-5dc8-ba29-4a26ee310260.arn}\",\n        \"${module.appcd_976676d4-ee68-5dc8-ba29-4a26ee310260.arn}/*\"\n      ]\n    }\n  ]\n}",
+      "role": "${module.appcd_02abe359-3f4c-560c-be3a-a14d98450ff9.name}",
+      "role_type": "Custom",
+      "source": "./modules/aws_iam_role_policy"
+    },
+    "appcd_3d6282aa-8e92-5305-b88a-4c023dd2cfbf": {
+      "name": "/aws/lambda/devinfra-serverless-hello-kitty-function",
+      "retention_in_days": 7,
+      "source": "./modules/aws_cloudwatch_log_group",
+      "tags": {
+        "appstack": "serverless-devinfra",
+        "component": "devinfra-serverless-hello-kitty"
+      }
+    },
+    "appcd_42e1274d-f56e-4fdc-8fc2-0b350e2c3644": {
+      "name": "Writer",
+      "policy": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"CloudWatchLogGroup3d6282aa8e925305b88a4c023dd2cfbf0\",\n      \"Action\": [\n        \"logs:CreateLogGroup\"\n      ],\n      \"Effect\": \"Allow\",\n      \"Resource\": [\n        \"${module.appcd_3d6282aa-8e92-5305-b88a-4c023dd2cfbf.arn}\"\n      ]\n    },\n    {\n      \"Sid\": \"CloudWatchLogGroup3d6282aa8e925305b88a4c023dd2cfbf1\",\n      \"Action\": [\n        \"logs:CreateLogStream\",\n        \"logs:PutLogEvents\"\n      ],\n      \"Effect\": \"Allow\",\n      \"Resource\": [\n        \"${module.appcd_3d6282aa-8e92-5305-b88a-4c023dd2cfbf.arn}:*\"\n      ]\n    }\n  ]\n}",
+      "role": "${module.appcd_02abe359-3f4c-560c-be3a-a14d98450ff9.name}",
+      "role_type": "Writer",
+      "source": "./modules/aws_iam_role_policy"
+    },
+    "appcd_976676d4-ee68-5dc8-ba29-4a26ee310260": {
+      "block_public_access": true,
+      "bucket_name": "shanx-first-serverless-app",
+      "bucket_policy": "",
+      "enable_versioning": true,
+      "enable_website_configuration": false,
+      "source": "./modules/aws_s3",
+      "sse_algorithm": "aws:kms",
+      "tags": {
+        "appstack": "serverless-devinfra",
+        "component": "devinfra-serverless-hello-kitty"
+      },
+      "website_error_document": "404.html",
+      "website_index_document": "index.html"
+    },
+    "appcd_d2900d38-6aaf-5f56-b0d8-b909967d568a": {
+      "architecture": "x86_64",
+      "authorization_type": "NONE",
+      "cors": [],
+      "create_function_url": true,
+      "description": null,
+      "environment_variables": {
+        "IMAGE_BUCKET": "shanx-first-serverless-app"
+      },
+      "event_source_arn": null,
+      "event_source_mapping": [],
+      "filename": null,
+      "function_name": "shreyansh-serverless-hello-kitty-function",
+      "handler": "main.lambda_handler",
+      "log_format": null,
+      "log_group_name": "${module.appcd_3d6282aa-8e92-5305-b88a-4c023dd2cfbf.name}",
+      "memory_size": 128,
+      "role": "${module.appcd_02abe359-3f4c-560c-be3a-a14d98450ff9.arn}",
+      "runtime": "python3.8",
+      "s3_bucket": null,
+      "s3_key": "build/app.zip",
+      "s3_object_version": null,
+      "source": "./modules/aws_lambda",
+      "system_log_level": null,
+      "tags": {
+        "appstack": "serverless-devinfra",
+        "component": "devinfra-serverless-hello-kitty"
+      },
+      "timeout": 3
+    }
+  }
+}
